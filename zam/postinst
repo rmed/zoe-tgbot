@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Install dependencies
+pip3 install -t ${ZOE_HOME}/agents/archivist/lib pyTelegramBotAPI
+
+# Create config file
+touch ${ZOE_HOME}/etc/tgbot.conf
