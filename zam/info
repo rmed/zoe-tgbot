@@ -1,0 +1,7 @@
+agent = tgbot
+version = 0.1.0
+license = MIT
+maintainer = Rafael Medina García <rafamedgar@gmail.com>
+script = tgbot.py
+topics =
+description = Telegram bot API
