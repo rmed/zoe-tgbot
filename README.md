@@ -54,7 +54,7 @@ agents (feedback of other agents, etc.).
 You may also use the agent in groups. The recommended way of doing so is by
 creating a new Zoe user for that group in `ZOE_HOME/etc/zoe-users.conf` like:
 
-~~~ [subject test] name = text preferred = tg tg = group#-xxxxxx locale = en
+~~~
 [subject test]
 name = text
 preferred = tg
