@@ -145,8 +145,6 @@ class Tgbot:
             In order to do this, the agent will `guess` who the recipient
             is based on the `to` tag in the parser.
         """
-        print(parser)
-        print(self.bot)
         to = self.guess(parser.get('to'))
         if not to:
             # Did not find unique ID
@@ -155,7 +153,6 @@ class Tgbot:
 
         msg = parser.get('msg')
 
-        print(to)
         # API supports a maximum of 5000 characters per message
         # This will divide the messages in chunks of 3000 characters
         text_chunks = apihelper.split_string(msg, 3000)
