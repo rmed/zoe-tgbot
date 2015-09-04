@@ -1,4 +1,4 @@
-# Zoe Tgbot ![Agent version](https://img.shields.io/badge/Zoe_Agent-0.1.0-blue.svg "Zoe Tgbot")
+# Zoe Tgbot ![Agent version](https://img.shields.io/badge/Zoe_Agent-0.1.1-blue.svg "Zoe Tgbot")
 
 Connect Zoe to Telegram using the new Bot API.
 
