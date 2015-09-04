@@ -168,17 +168,18 @@ class Tgbot:
         """
         subjects = zoe.Users().subjects()
 
-        # Iterate the user_ids list because we want to give preference
-        # to group IDs
-        for usr in user_ids:
-            for subj in subjects:
-                if 'tg' not in subjects[subj]:
-                    continue
+        # Store a relation so users are not accessed all the time
+        id_rels = {}
+        for subj in subjects:
+            if 'tg' not in subjects[subj]:
+                continue
 
-                subject_ids = [s.strip() for s in subjects[subj]['tg'].split(',')]
-                if usr in subject_ids:
-                    uid = subjects[subj]['uniqueid']
-                    return usr, subjects[uid]
+            for s in subjects[subj]['tg'].split(','):
+                id_rels[s.strip()] = subjects[subj]['uniqueid']
+
+        for usr in user_ids:
+            if usr in id_rels.keys():
+                return usr, subjects[id_rels[usr]]
 
         return None, None
 
