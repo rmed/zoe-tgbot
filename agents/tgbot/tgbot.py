@@ -32,10 +32,11 @@ import base64
 import threading
 import telebot
 import time
+import zoe
 from os import environ as env
 from os.path import join as path
-from telebot import apihelper
-from zoe.deco import *
+from telebot import util
+from zoe.deco import Agent, Message
 
 with open(path(env['ZOE_HOME'], 'etc', 'tgbot.conf'), 'r') as f:
     TG_TOKEN = f.readline().strip()
@@ -134,7 +135,7 @@ class Tgbot:
 
         # API supports a maximum of 5000 characters per message
         # This will divide the messages in chunks of 3000 characters
-        text_chunks = apihelper.split_string(text, 3000)
+        text_chunks = util.split_string(text, 3000)
         for chunk in text_chunks:
             self.bot.send_message(tgchat, chunk, parse_mode='Markdown')
 
@@ -155,7 +156,7 @@ class Tgbot:
 
         # API supports a maximum of 5000 characters per message
         # This will divide the messages in chunks of 3000 characters
-        text_chunks = apihelper.split_string(msg, 3000)
+        text_chunks = util.split_string(msg, 3000)
         for chunk in text_chunks:
             self.bot.send_message(to, chunk, parse_mode='Markdown')
 
