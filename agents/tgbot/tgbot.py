@@ -61,7 +61,8 @@ class Tgbot:
             and parses them accordingly.
         """
         while True:
-            self.bot.polling()
+            # Continue polling even after an exception occurs
+            self.bot.polling(none_stop=True)
             time.sleep(100)
 
     def _tg_msg(self, messages):
