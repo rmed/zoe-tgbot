@@ -138,7 +138,8 @@ class Tgbot:
         # This will divide the messages in chunks of 3000 characters
         text_chunks = util.split_string(text, 3000)
         for chunk in text_chunks:
-            self.bot.send_message(tgchat, chunk, parse_mode='Markdown')
+            # self.bot.send_message(tgchat, chunk, parse_mode='Markdown')
+            self.bot.send_message(tgchat, chunk)
 
     @Message(tags=[])
     def sendtg(self, parser):
@@ -159,7 +160,8 @@ class Tgbot:
         # This will divide the messages in chunks of 3000 characters
         text_chunks = util.split_string(msg, 3000)
         for chunk in text_chunks:
-            self.bot.send_message(to, chunk, parse_mode='Markdown')
+            # self.bot.send_message(to, chunk, parse_mode='Markdown')
+            self.bot.send_message(to, chunk)
 
     def finduser(self, user_ids):
         """ Find a given user or group.

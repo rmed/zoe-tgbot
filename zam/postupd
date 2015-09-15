@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-# Install dependencies
+# Update dependencies
 mkdir -p ${ZOE_HOME}/agents/tgbot/lib
 pip3 install -U -t ${ZOE_HOME}/agents/tgbot/lib pyTelegramBotAPI
