@@ -48,7 +48,8 @@ class Tgbot:
     def __init__(self):
         self._starttime = time.time()
 
-        self.bot = telebot.TeleBot(TG_TOKEN)
+        # Non-threaded (better fro skipping exceptions)
+        self.bot = telebot.TeleBot(TG_TOKEN, threaded=False)
         self.bot.set_update_listener(self._tg_msg)
         self._bot_me = self.bot.get_me()
 
@@ -61,9 +62,14 @@ class Tgbot:
             and parses them accordingly.
         """
         while True:
-            # Continue polling even after an exception occurs
-            self.bot.polling(none_stop=True)
-            time.sleep(100)
+            try:
+                # Continue polling even after an exception occurs
+                self.bot.polling(none_stop=True)
+                time.sleep(100)
+            except Exception as e:
+                print('[EXCEPTION]:', e)
+                time.sleep(100)
+                pass
 
     def _tg_msg(self, messages):
         """ Handler for telegram messages. """
