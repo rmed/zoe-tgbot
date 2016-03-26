@@ -1,5 +1,5 @@
 agent = tgbot
-version = 0.2.0
+version = 0.2.1
 license = MIT
 maintainer = Rafael Medina García <rafamedgar@gmail.com>
 script = tgbot.py
