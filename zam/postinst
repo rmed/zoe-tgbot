@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 # Install dependencies
-mkdir -p ${ZOE_HOME}/agents/tgbot/lib
-pip3 install -t ${ZOE_HOME}/agents/tgbot/lib pyTelegramBotAPI
+# Done by zoe launcher
+# mkdir -p ${ZOE_HOME}/agents/tgbot/lib
+# pip3 install -t ${ZOE_HOME}/agents/tgbot/lib pyTelegramBotAPI
 
 # Create config file
 touch ${ZOE_HOME}/etc/tgbot.conf

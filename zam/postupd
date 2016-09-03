@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
 # Update dependencies
-mkdir -p ${ZOE_HOME}/agents/tgbot/lib
-pip3 install -U -t ${ZOE_HOME}/agents/tgbot/lib pyTelegramBotAPI
+# mkdir -p ${ZOE_HOME}/agents/tgbot/lib
+# pip3 install -U -t ${ZOE_HOME}/agents/tgbot/lib pyTelegramBotAPI
+
+# Uninstall pyTelegramBotAPI, installed automatically by launcher
+rm ${ZOE_HOME}/agents/tgbot/.pip-requirements-installed
+rm -rf ${ZOE_HOME}/agents/tgbot/lib

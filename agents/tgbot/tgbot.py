@@ -3,7 +3,7 @@
 #
 # zoe-tgbot - https://github.com/rmed/zoe-tgbot
 #
-# Copyright (c) 2015 Rafael Medina García <rafamedgar@gmail.com>
+# Copyright (c) 2016 Rafael Medina García <rafamedgar@gmail.com>
 #
 # The MIT License (MIT)
 #
@@ -26,6 +26,7 @@
 # SOFTWARE.
 
 import base64
+import logging
 import subprocess
 import threading
 import telebot
@@ -39,16 +40,24 @@ from zoe.deco import Agent, Message
 with open(path(env['ZOE_HOME'], 'etc', 'tgbot.conf'), 'r') as f:
     TG_TOKEN = f.readline().strip()
 
+# Accepted message types
+ACCEPTED_TYPES = ['text']
+
+# Time to sleep after an exception (seconds)
+SLEEP_TIME = 10
+
+# Logging level
+telebot.logger.setLevel(logging.INFO)
+
 
 @Agent(name='tg')
-class Tgbot:
+class TgBot:
 
     def __init__(self):
         self._starttime = time.time()
-        self._sleeptime = 10000
 
-        # Non-threaded (better fro skipping exceptions)
-        self.bot = telebot.TeleBot(TG_TOKEN, threaded=False)
+        # Non-threaded (better for skipping exceptions)
+        self.bot = telebot.TeleBot(TG_TOKEN, threaded=False, skip_pending=True)
         self.bot.set_update_listener(self._tg_msg)
         self._bot_me = self.bot.get_me()
 
@@ -57,28 +66,37 @@ class Tgbot:
         self._tg_listener.start()
 
     def _tg_bot(self):
-        """ Start the telegram bot that continuously polls for new messages
-            and parses them accordingly.
+        """Start the telegram bot.
+
+        The bot continuously polls for new messages and parses them accordingly.
         """
         while True:
             try:
                 # Continue polling even after an exception occurs
+                print('[INFO] Start polling')
                 self.bot.polling(none_stop=True)
-                time.sleep(self._sleeptime)
             except Exception as e:
                 print('[EXCEPTION]:', e)
-                time.sleep(self._sleeptime)
+
+                print('[SLEEP] Start sleep')
+                time.sleep(SLEEP_TIME)
+                print('[SLEEP] End sleep')
+
                 pass
 
+            # Stop polling and restart it in next iteration
+            print('[INFO] Stop polling')
+            self.bot.stop_polling()
+
     def _tg_msg(self, messages):
-        """ Handler for telegram messages. """
+        """Listener for telegram messages."""
         for msg in messages:
             if msg.date < self._starttime:
                 # Skip old messages
                 continue
 
-            if msg.content_type != 'text':
-                # Only work with texts
+            if msg.content_type not in ACCEPTED_TYPES:
+                # Only work with accepted types
                 continue
 
             from_user = msg.from_user.id
@@ -86,8 +104,9 @@ class Tgbot:
             from_chat = msg.chat.id
 
             from_full = []
-            if from_chat < 0:
-                # If chat ID is negative, then it is a group chat
+
+            if msg.chat.type == 'group':
+                # Group chat
                 from_full.append('group#%s' % from_chat)
 
             from_full.append('user#%s' % from_user)
@@ -135,7 +154,7 @@ class Tgbot:
 
     @Message(tags=['command-feedback'])
     def feedback(self, parser):
-        """ Send the feedback of a command through Telegram. """
+        """Send the feedback of a command through Telegram."""
         tgchat = int(parser.get('tgchat'))
         text = parser.get('feedback-string')
 
@@ -148,10 +167,10 @@ class Tgbot:
 
     @Message(tags=[])
     def sendtg(self, parser):
-        """ Send a message to an user through Telegram.
+        """Send a message to an user through Telegram.
 
-            In order to do this, the agent will `guess` who the recipient
-            is based on the `to` tag in the parser.
+        In order to do this, the agent will `guess` who the recipient
+        is based on the `to` tag in the parser.
         """
         to = self.guess(parser.get('to'))
         if not to:
@@ -180,6 +199,12 @@ class Tgbot:
             with open(wavpath, 'rb') as f:
                 self.bot.send_voice(to, f)
 
+        # Files/Attachments
+        att = parser.get('att')
+        if att:
+            with open(att, 'rb') as f:
+                self.bot.send_document(to, f)
+
         # Images
         img = parser.get('img')
         if img:
@@ -187,11 +212,11 @@ class Tgbot:
                 self.bot.send_photo(to, f)
 
     def finduser(self, user_ids):
-        """ Find a given user or group.
+        """Find a given user or group.
 
-            First checks the group ID to see if anyone in the given group can
-            communicate with Zoe. If no occurence is found, the user ID
-            is checked, and then the username (if present).
+        First checks the group ID to see if anyone in the given group can
+        communicate with Zoe. If no occurence is found, the user ID
+        is checked, and then the username (if present).
         """
         subjects = zoe.Users().subjects()
 
@@ -211,10 +236,10 @@ class Tgbot:
         return None, None
 
     def guess(self, dest):
-        """ Guess the recipient of the message
+        """Guess the recipient of the message
 
-            First, it will check if it is a Telegram ID (string with #), then
-            if it is a Zoe user and finally Telegram nicknames for each user.
+        First, it will check if it is a Telegram ID (string with #), then
+        if it is a Zoe user and finally Telegram nicknames for each user.
         """
         if '#' in dest:
             # Already a unique ID
